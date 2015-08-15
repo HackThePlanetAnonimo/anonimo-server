@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, request
 import json, httplib, urllib
 
 app = Flask(__name__)
@@ -47,10 +47,32 @@ def get_all_questions_by_student_id(student_id):
     result = json.loads(connection.getresponse().read())
     return Response(json.dumps(result),  mimetype='application/json')
 
-# @app.route('/ask_a_question/<student>', methods=['POST'])
+@app.route('/ask_a_question', methods=['POST'])
+def ask_a_question():
+    jsonObj = request.json
+    import pdb; pdb.set_trace()
+    connection.request('POST', '/1/classes/Questions/', json.dumps({
+        "Student_id": str(jsonObj['Student_id']),
+        "Text": str(jsonObj['Text'])
+    }), {
+           "X-Parse-Application-Id": XParseApplicationId,
+           "X-Parse-REST-API-Key": XParseRESTAPIKey,
+    })
+    result = json.loads(connection.getresponse().read())
+    return Response(json.dumps({'Question_id': result['objectId']}),  mimetype='application/json')
 
 
-# @app.route('/add_a_student/<name>', methods=['POST'])
+@app.route('/add_a_student', methods=['POST'])
+def add_a_student():
+    jsonObj = request.json
+    connection.request('POST', '/1/classes/Students/', json.dumps({
+        "Name": str(jsonObj['Name'])
+    }), {
+           "X-Parse-Application-Id": XParseApplicationId,
+           "X-Parse-REST-API-Key": XParseRESTAPIKey,
+    })
+    result = json.loads(connection.getresponse().read())
+    return Response(json.dumps({'Student_id': result['objectId']}),  mimetype='application/json')
 
 
 
