@@ -48,6 +48,10 @@ def get_all_questions_by_student_id(student_id):
     return Response(json.dumps(result),  mimetype='application/json')
 
 # Ability to ask a question
+
+# TODO: First check if student is logged in
+# Or have a route that just tells if logged in or not and prevent the 
+# frontend from making a call if not logged in
 @app.route('/ask_a_question', methods=['POST'])
 def ask_a_question():
     jsonObj = request.json
@@ -70,7 +74,6 @@ def ask_a_question():
 @app.route('/student_sign_up', methods=['GET','POST'])
 def student_sign_up():
     jsonObj = request.json
-    import pdb; pdb.set_trace()
     params = urllib.urlencode({"where":json.dumps({
         "User_id": str(jsonObj['User_id']),
     })})
@@ -134,7 +137,6 @@ def student_sign_in():
 def student_sign_out():
     jsonObj = request.json
     studentId = jsonObj['Student_id']
-    import pdb; pdb.set_trace()
     connection.request('PUT', '/1/classes/Students/'+studentId, json.dumps({
        "isLoggedIn": False
     }), {
@@ -142,11 +144,11 @@ def student_sign_out():
        "X-Parse-REST-API-Key": XParseRESTAPIKey,
        "Content-Type": "application/json"
     })
-    return Response(json.dumps({'success': True}),  mimetype='application/json')
-# Create a model for professor
-# Store username and password in the table for students
-# Create a student during signup. Check if username already exists
-# 
+    return Response(json.dumps({'success': True}),  mimetype='application/json')  
+
+# Create a model for professor: Name, userid, Password, isLoggedIn
+# Create a model for class: Student_id, Professor_id.
+# A class object links a student to a professor
 
 
 if __name__ == "__main__":
