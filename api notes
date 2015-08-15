@@ -8,3 +8,16 @@ student_id
 Student
 student_name
 
+1) Student should have email and password and not userid. Email should be distinct
+
+2) Classes associate students and professors
+
+3) Questions should have a status: unanswered and answered
+
+4) Answering questions should be like a todo list
+
+5) Ask the question again. What did you not understand?
+
+6) Add votes to a question
+
+7) Question should have lecture id instead of student id
