@@ -1,5 +1,8 @@
 1) Make a virtualenv:
- virtualenv venv
- source venv/bin/activate
+
+    virtualenv venv
+    source venv/bin/activate
+
 2) Install all dependencies:
- pip install -r requirements.txt
+
+    pip install -r requirements.txt
