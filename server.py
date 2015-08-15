@@ -47,6 +47,7 @@ def get_all_questions_by_student_id(student_id):
     result = json.loads(connection.getresponse().read())
     return Response(json.dumps(result),  mimetype='application/json')
 
+# Ability to ask a question
 @app.route('/ask_a_question', methods=['POST'])
 def ask_a_question():
     jsonObj = request.json
@@ -62,18 +63,90 @@ def ask_a_question():
     return Response(json.dumps({'Question_id': result['objectId']}),  mimetype='application/json')
 
 
-@app.route('/add_a_student', methods=['POST'])
-def add_a_student():
+# Ability to add a student
+# Requires: User_id, Name, Password
+# Return: check for boolean "success". If its true, you'll also get
+# the student_id inserted
+@app.route('/student_sign_up', methods=['GET','POST'])
+def student_sign_up():
     jsonObj = request.json
+    import pdb; pdb.set_trace()
+    params = urllib.urlencode({"where":json.dumps({
+        "User_id": str(jsonObj['User_id']),
+    })})
+
+    # Check if User_id already taken
+    connection.request('GET', '/1/classes/Students/?%s' % params, '', {
+        "X-Parse-Application-Id": XParseApplicationId,
+        "X-Parse-REST-API-Key": XParseRESTAPIKey,
+    })
+    result = json.loads(connection.getresponse().read())
+    # userid already exists. Signup fails
+    if len(result['results']) > 0:
+        return Response(json.dumps({'success': False}),  mimetype='application/json')
+
     connection.request('POST', '/1/classes/Students/', json.dumps({
-        "Name": str(jsonObj['Name'])
+        "Name": str(jsonObj['Name']),
+        "User_id": str(jsonObj['User_id']),
+        "Password": str(jsonObj['Password']),
+        "isLoggedIn": True
     }), {
            "X-Parse-Application-Id": XParseApplicationId,
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
     })
     result = json.loads(connection.getresponse().read())
-    return Response(json.dumps({'Student_id': result['objectId']}),  mimetype='application/json')
+    return Response(json.dumps({'success': True, 'Student_id': result['objectId']}),  mimetype='application/json')
 
+# Ability to sign in
+# Requires: User_id, Password
+@app.route('/student_sign_in', methods=['GET', 'POST'])
+def student_sign_in():
+    import pdb; pdb.set_trace()
+    jsonObj = request.json
+    params = urllib.urlencode({"where":json.dumps({
+        "User_id": str(jsonObj['User_id']),
+        "Password": str(jsonObj['Password'])
+    })})
+    connection.request('GET', '/1/classes/Students/?%s' % params, '', {
+        "X-Parse-Application-Id": XParseApplicationId,
+        "X-Parse-REST-API-Key": XParseRESTAPIKey,
+    })
+    results = json.loads(connection.getresponse().read())['results']
+
+    # Invalid credentials
+    if len(results) == 0:
+        return Response(json.dumps({'success': False}),  mimetype='application/json')
+
+    studentId = results[0]['objectId']
+    connection.request('PUT', '/1/classes/Students/'+studentId, json.dumps({
+       "isLoggedIn": True
+    }), {
+       "X-Parse-Application-Id": XParseApplicationId,
+       "X-Parse-REST-API-Key": XParseRESTAPIKey,
+       "Content-Type": "application/json"
+    })
+    return Response(json.dumps({'success': True}),  mimetype='application/json')
+    # Given User_id and Password, fetch a student. If you cant, invalid credentials.
+    # Else, using the ObjectId, PUT to update isLoggedIn
+
+# Expects: Student_id
+@app.route('/student_sign_out', methods=['POST'])
+def student_sign_out():
+    jsonObj = request.json
+    studentId = jsonObj['Student_id']
+    import pdb; pdb.set_trace()
+    connection.request('PUT', '/1/classes/Students/'+studentId, json.dumps({
+       "isLoggedIn": False
+    }), {
+       "X-Parse-Application-Id": XParseApplicationId,
+       "X-Parse-REST-API-Key": XParseRESTAPIKey,
+       "Content-Type": "application/json"
+    })
+    return Response(json.dumps({'success': True}),  mimetype='application/json')
+# Create a model for professor
+# Store username and password in the table for students
+# Create a student during signup. Check if username already exists
+# 
 
 
 if __name__ == "__main__":
