@@ -331,7 +331,7 @@ def vote_a_question():
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
-# {"Professor_id": "ebS7BImXgB", "Student_ids": "kV2kIEKENH,L5cfAtIG6y"}
+# {"Professor_id": "ebS7BImXgB", "Student_ids": "kV2kIEKENH,L5cfAtIG6y", "Name": "Mathematics101"}
 # bunch of student ids separated by comma
 @app.route('/setup_a_lecture', methods=['POST'])
 def setup_a_lecture():
@@ -342,13 +342,30 @@ def setup_a_lecture():
     
     connection.request('POST', '/1/classes/Lectures/', json.dumps({
         "Professor_Id": str(jsonObj['Professor_id']),
-        "Student_Ids": str(jsonObj['Student_ids'])
+        "Student_Ids": str(jsonObj['Student_ids']),
+        "Name": str(jsonObj['Name'])
     }), {
            "X-Parse-Application-Id": XParseApplicationId,
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
     })
     result = json.loads(connection.getresponse().read())
     resp = Response(json.dumps({'success': True, 'Lecture_id': result['objectId']}),  mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+@app.route('/get_all_lectures/<professor_id>', methods=['GET'])
+def get_all_lectures(professor_id):
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
+    params = urllib.urlencode({"where":json.dumps({
+        "Professor_Id": professor_id,
+    })})
+    connection.request('GET', '/1/classes/Lectures/?%s' % params, '', {
+        "X-Parse-Application-Id": XParseApplicationId,
+        "X-Parse-REST-API-Key": XParseRESTAPIKey,
+    })
+    result = json.loads(connection.getresponse().read())
+    resp = Response(json.dumps(result),  mimetype='application/json')
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
