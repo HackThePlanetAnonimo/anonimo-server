@@ -33,7 +33,9 @@ def get_all_students():
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
          })
     result = json.loads(connection.getresponse().read())
-    return Response(json.dumps(result),  mimetype='application/json')
+    resp = Response(json.dumps(result),  mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 # Gets all questions that were asked by a particular student
 @app.route('/get_all_questions_by_student_id/<student_id>', methods=['GET'])
