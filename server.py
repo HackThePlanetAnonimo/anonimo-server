@@ -55,6 +55,7 @@ def get_all_questions_by_student_id(student_id):
 # TODO: First check if student is logged in
 # Or have a route that just tells if logged in or not and prevent the 
 # frontend from making a call if not logged in
+# {"Student_id": "kV2kIEKENH", "Text": "I am thirsty"}
 @app.route('/ask_a_question', methods=['POST'])
 def ask_a_question():
     connection = httplib.HTTPSConnection('api.parse.com', 443)
@@ -166,6 +167,7 @@ def student_sign_out():
 # Ability to add a professor
 # Requires: Email, Name, Password
 # Return: check for boolean "success".
+# {"Email": "ash@uwaterloo.ca", "Password": "ketchup", "Name": "ash"}
 @app.route('/professor_sign_up', methods=['GET','POST'])
 def professor_sign_up():
     connection = httplib.HTTPSConnection('api.parse.com', 443)
@@ -258,6 +260,7 @@ def get_all_professors():
 
 # expects: Question_id
 # modifies: Status field of Question model
+# {"Question_id": "koRfJ5lj2W"}
 @app.route('/answer_a_question', methods=['POST'])
 def answer_a_question():
     connection = httplib.HTTPSConnection('api.parse.com', 443)
@@ -275,6 +278,7 @@ def answer_a_question():
 
 # expects: Question_id
 # modifies: Votes field of Question model
+# {"Question_id": "koRfJ5lj2W"}
 @app.route('/vote_a_question', methods=['POST'])
 def vote_a_question():
     connection = httplib.HTTPSConnection('api.parse.com', 443)
