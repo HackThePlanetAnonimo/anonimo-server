@@ -169,7 +169,6 @@ def student_sign_out():
 # Return: check for boolean "success".
 # {"Email": "ash@uwaterloo.ca", "Password": "ketchup", "Name": "ash"}
 @app.route('/professor_sign_up', methods=['GET','POST'])
-@crossdomain(origin='*')
 def professor_sign_up():
     connection = httplib.HTTPSConnection('api.parse.com', 443)
     connection.connect()
@@ -186,7 +185,9 @@ def professor_sign_up():
     result = json.loads(connection.getresponse().read())
     # Email already exists. Signup fails
     if len(result['results']) > 0:
-        return Response(json.dumps({'success': False}),  mimetype='application/json')
+        resp = Response(json.dumps({'success': False}),  mimetype='application/json')
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
 
     connection.request('POST', '/1/classes/Professors/', json.dumps({
         "Name": str(jsonObj['Name']),
@@ -198,7 +199,9 @@ def professor_sign_up():
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
     })
     result = json.loads(connection.getresponse().read())
-    return Response(json.dumps({'success': True, 'Professor_id': result['objectId']}),  mimetype='application/json')
+    resp = Response(json.dumps({'success': True, 'Professor_id': result['objectId']}),  mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 # Ability to sign in
 # Requires: Email, Password
