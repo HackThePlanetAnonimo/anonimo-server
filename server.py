@@ -28,7 +28,6 @@ def get_all_questions():
 # Gets all Question objects
 @app.route('/get_all_questions_by_lecture/<lecture_id>', methods=['GET'])
 def get_all_questions_by_lecture(lecture_id):
-    import pdb; pdb.set_trace()
     connection = httplib.HTTPSConnection('api.parse.com', 443)
     connection.connect()
     params = urllib.urlencode({"where":json.dumps({
