@@ -369,5 +369,21 @@ def get_all_lectures(professor_id):
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
+@app.route('/get_lecture_by_id/<lecture_id>', methods=['GET'])
+def get_lecture_by_id(lecture_id):
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
+    params = urllib.urlencode({"where":json.dumps({
+        "Lecture_Id": lecture_id,
+    })})
+    connection.request('GET', '/1/classes/Lectures/'+lecture_id, '', {
+        "X-Parse-Application-Id": XParseApplicationId,
+        "X-Parse-REST-API-Key": XParseRESTAPIKey,
+    })
+    result = json.loads(connection.getresponse().read())
+    resp = Response(json.dumps(result),  mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
 if __name__ == "__main__":
     app.run()
