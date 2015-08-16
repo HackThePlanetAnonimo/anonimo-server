@@ -70,6 +70,7 @@ def ask_a_question():
     connection.request('POST', '/1/classes/Questions/', json.dumps({
         "Student_id": str(jsonObj['Student_id']),
         "Text": str(jsonObj['Text']),
+        "Lecture_id": str(jsonObj['Lecture_id']),
         "Status": "unanswered",
         "Votes": 0
     }), {
