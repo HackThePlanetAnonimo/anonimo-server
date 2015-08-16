@@ -169,6 +169,7 @@ def student_sign_out():
 # Return: check for boolean "success".
 # {"Email": "ash@uwaterloo.ca", "Password": "ketchup", "Name": "ash"}
 @app.route('/professor_sign_up', methods=['GET','POST'])
+@crossdomain(origin='*')
 def professor_sign_up():
     connection = httplib.HTTPSConnection('api.parse.com', 443)
     connection.connect()
@@ -297,29 +298,24 @@ def vote_a_question():
     })
     return Response(json.dumps({'success': True}),  mimetype='application/json') 
 
-# @app.route('/setup_a_lecture', methods=['POST'])
-# def setup_a_lecture():
-#     jsonObj = request.json
-#     professorId = jsonObj['Professor_id']
-
-
-
-#     connection.request('PUT', '/1/classes/Questions/'+questionId, json.dumps({
-#         "Votes": {
-#             "__op": "Increment",
-#             "amount": 1
-#         }
-#     }), {
-#        "X-Parse-Application-Id": XParseApplicationId,
-#        "X-Parse-REST-API-Key": XParseRESTAPIKey,
-#        "Content-Type": "application/json"
-#     })
-
-# Professor to an array of students
-
-
-# Create a model for class: Student_id, Professor_id.
-# A class object links a student to a professor
+# {"Professor_id": "ebS7BImXgB", "Student_ids": "kV2kIEKENH,L5cfAtIG6y"}
+# bunch of student ids separated by comma
+@app.route('/setup_a_lecture', methods=['POST'])
+def setup_a_lecture():
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
+    jsonObj = request.json
+    professorId = jsonObj['Professor_id']
+    
+    connection.request('POST', '/1/classes/Lectures/', json.dumps({
+        "Professor_Id": str(jsonObj['Professor_id']),
+        "Student_Ids": str(jsonObj['Student_ids'])
+    }), {
+           "X-Parse-Application-Id": XParseApplicationId,
+           "X-Parse-REST-API-Key": XParseRESTAPIKey,
+    })
+    result = json.loads(connection.getresponse().read())
+    return Response(json.dumps({'success': True, 'Lecture_id': result['objectId']}),  mimetype='application/json')
 
 
 if __name__ == "__main__":
