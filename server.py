@@ -173,7 +173,7 @@ def student_sign_in():
        "X-Parse-REST-API-Key": XParseRESTAPIKey,
        "Content-Type": "application/json"
     })
-    resp = Response(json.dumps({'success': True}),  mimetype='application/json')
+    resp = Response(json.dumps({'success': True, 'Student_id': str(studentId)}),  mimetype='application/json')
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
     # Given User_id and Password, fetch a student. If you cant, invalid credentials.
@@ -243,6 +243,7 @@ def professor_sign_up():
 # Requires: Email, Password
 @app.route('/professor_sign_in', methods=['GET', 'POST'])
 def professor_sign_in():
+    import pdb; pdb.set_trace()
     connection = httplib.HTTPSConnection('api.parse.com', 443)
     connection.connect()
     jsonObj = request.json
@@ -270,7 +271,7 @@ def professor_sign_in():
        "X-Parse-REST-API-Key": XParseRESTAPIKey,
        "Content-Type": "application/json"
     })
-    resp = Response(json.dumps({'success': True, 'Professor_id': result['objectId']}),  mimetype='application/json')  
+    resp = Response(json.dumps({'success': True, 'Professor_id': str(professorId)}),  mimetype='application/json')  
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
