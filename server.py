@@ -270,7 +270,7 @@ def professor_sign_in():
        "X-Parse-REST-API-Key": XParseRESTAPIKey,
        "Content-Type": "application/json"
     })
-    resp = Response(json.dumps({'success': True}),  mimetype='application/json')  
+    resp = Response(json.dumps({'success': True, 'Professor_id': result['objectId']}),  mimetype='application/json')  
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
