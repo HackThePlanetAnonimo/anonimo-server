@@ -7,9 +7,6 @@ app = Flask(__name__)
 XParseApplicationId = "8jSxdsd0pT9odu9duHaoRMouaC46SGZlglP67J4p"
 XParseRESTAPIKey = "EBw6tp2t71e7MVbqWr2NpupphfQmyuh45CWy79DK"
 
-connection = httplib.HTTPSConnection('api.parse.com', 443)
-connection.connect()
-
 @app.route('/')
 def hello():
     return render_template('index.html')
@@ -17,6 +14,8 @@ def hello():
 # Gets all Question objects
 @app.route('/get_all_questions', methods=['GET'])
 def get_all_questions():
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
     connection.request('GET', '/1/classes/Questions/', '', {
            "X-Parse-Application-Id": XParseApplicationId,
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
@@ -27,6 +26,8 @@ def get_all_questions():
 # Gets all Student objects
 @app.route('/get_all_students', methods=['GET'])
 def get_all_students():
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
     connection.request('GET', '/1/classes/Students/', '', {
            "X-Parse-Application-Id": XParseApplicationId,
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
@@ -37,6 +38,8 @@ def get_all_students():
 # Gets all questions that were asked by a particular student
 @app.route('/get_all_questions_by_student_id/<student_id>', methods=['GET'])
 def get_all_questions_by_student_id(student_id):
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
     params = urllib.urlencode({"where":json.dumps({
         "Student_id": student_id,
     })})
@@ -54,8 +57,9 @@ def get_all_questions_by_student_id(student_id):
 # frontend from making a call if not logged in
 @app.route('/ask_a_question', methods=['POST'])
 def ask_a_question():
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
     jsonObj = request.json
-    import pdb; pdb.set_trace()
     connection.request('POST', '/1/classes/Questions/', json.dumps({
         "Student_id": str(jsonObj['Student_id']),
         "Text": str(jsonObj['Text']),
@@ -70,14 +74,17 @@ def ask_a_question():
 
 
 # Ability to add a student
-# Requires: User_id, Name, Password
+# Requires: Email, Name, Password
 # Return: check for boolean "success". If its true, you'll also get
 # the student_id inserted
+# {"Email": "squatle@uwaterloo.ca", "Password": "waterwater", "Name": "Squartle"}
 @app.route('/student_sign_up', methods=['GET','POST'])
 def student_sign_up():
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
     jsonObj = request.json
     params = urllib.urlencode({"where":json.dumps({
-        "User_id": str(jsonObj['User_id']),
+        "Email": str(jsonObj['Email']),
     })})
 
     # Check if User_id already taken
@@ -92,7 +99,7 @@ def student_sign_up():
 
     connection.request('POST', '/1/classes/Students/', json.dumps({
         "Name": str(jsonObj['Name']),
-        "User_id": str(jsonObj['User_id']),
+        "Email": str(jsonObj['Email']),
         "Password": str(jsonObj['Password']),
         "isLoggedIn": True
     }), {
@@ -103,13 +110,16 @@ def student_sign_up():
     return Response(json.dumps({'success': True, 'Student_id': result['objectId']}),  mimetype='application/json')
 
 # Ability to sign in
-# Requires: User_id, Password
+# Requires: Email, Password
+# {"Email": "pikachu@uwaterloo.ca", "Password": "iamfat"}
 @app.route('/student_sign_in', methods=['GET', 'POST'])
 def student_sign_in():
     import pdb; pdb.set_trace()
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
     jsonObj = request.json
     params = urllib.urlencode({"where":json.dumps({
-        "User_id": str(jsonObj['User_id']),
+        "Email": str(jsonObj['Email']),
         "Password": str(jsonObj['Password'])
     })})
     connection.request('GET', '/1/classes/Students/?%s' % params, '', {
@@ -135,8 +145,11 @@ def student_sign_in():
     # Else, using the ObjectId, PUT to update isLoggedIn
 
 # Expects: Student_id
+# {"Student_id": "L5cfAtIG6y"}
 @app.route('/student_sign_out', methods=['POST'])
 def student_sign_out():
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
     jsonObj = request.json
     studentId = jsonObj['Student_id']
     connection.request('PUT', '/1/classes/Students/'+studentId, json.dumps({
@@ -155,7 +168,8 @@ def student_sign_out():
 # Return: check for boolean "success".
 @app.route('/professor_sign_up', methods=['GET','POST'])
 def professor_sign_up():
-    import pdb; pdb.set_trace()
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
     jsonObj = request.json
     params = urllib.urlencode({"where":json.dumps({
         "Email": str(jsonObj['Email']),
@@ -187,6 +201,8 @@ def professor_sign_up():
 # Requires: Email, Password
 @app.route('/professor_sign_in', methods=['GET', 'POST'])
 def professor_sign_in():
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
     jsonObj = request.json
     params = urllib.urlencode({"where":json.dumps({
         "Email": str(jsonObj['Email']),
@@ -215,7 +231,8 @@ def professor_sign_in():
 # Expects: Professor_id (Professor's objectId)
 @app.route('/professor_sign_out', methods=['POST'])
 def professor_sign_out():
-    import pdb; pdb.set_trace()
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
     jsonObj = request.json
     professorId = jsonObj['Professor_id']
     connection.request('PUT', '/1/classes/Professors/'+professorId, json.dumps({
@@ -230,6 +247,8 @@ def professor_sign_out():
 # Create a model for professor: Name, email, Password, isLoggedIn
 @app.route('/get_all_professors', methods=['GET'])
 def get_all_professors():
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
     connection.request('GET', '/1/classes/Professors/', '', {
            "X-Parse-Application-Id": XParseApplicationId,
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
@@ -241,6 +260,8 @@ def get_all_professors():
 # modifies: Status field of Question model
 @app.route('/answer_a_question', methods=['POST'])
 def answer_a_question():
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
     jsonObj = request.json
     questionId = jsonObj['Question_id']
     connection.request('PUT', '/1/classes/Questions/'+questionId, json.dumps({
@@ -256,6 +277,8 @@ def answer_a_question():
 # modifies: Votes field of Question model
 @app.route('/vote_a_question', methods=['POST'])
 def vote_a_question():
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
     jsonObj = request.json
     questionId = jsonObj['Question_id']
     connection.request('PUT', '/1/classes/Questions/'+questionId, json.dumps({
@@ -275,7 +298,7 @@ def vote_a_question():
 #     jsonObj = request.json
 #     professorId = jsonObj['Professor_id']
 
-    
+
 
 #     connection.request('PUT', '/1/classes/Questions/'+questionId, json.dumps({
 #         "Votes": {
