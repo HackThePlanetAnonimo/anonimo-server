@@ -32,9 +32,9 @@ def get_all_questions_by_lecture(lecture_id):
     connection = httplib.HTTPSConnection('api.parse.com', 443)
     connection.connect()
     params = urllib.urlencode({"where":json.dumps({
-        "Lecture_id": str(lecture_id),
+        "Lecture_id": lecture_id,
     })})
-    connection.request('GET', '/1/classes/Lectures/?%s' % params, '', {
+    connection.request('GET', '/1/classes/Questions/?%s' % params, '', {
            "X-Parse-Application-Id": XParseApplicationId,
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
          })
