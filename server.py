@@ -186,7 +186,7 @@ def professor_sign_up():
     # Email already exists. Signup fails
     if len(result['results']) > 0:
         resp = Response(json.dumps({'success': False}),  mimetype='application/json')
-        resp.headers['Access-Control-Allow-Origin'] = '*'
+        resp.headers['Access-Control-Allow-Origin'] = 'http://localhost:5000'
         return resp
 
     connection.request('POST', '/1/classes/Professors/', json.dumps({
@@ -200,7 +200,7 @@ def professor_sign_up():
     })
     result = json.loads(connection.getresponse().read())
     resp = Response(json.dumps({'success': True, 'Professor_id': result['objectId']}),  mimetype='application/json')
-    resp.headers['Access-Control-Allow-Origin'] = '*'
+    resp.headers['Access-Control-Allow-Origin'] = 'http://localhost:5000'
     return resp
 
 # Ability to sign in
