@@ -145,7 +145,6 @@ def student_sign_up():
 # {"Email": "pikachu@uwaterloo.ca", "Password": "iamfat"}
 @app.route('/student_sign_in', methods=['GET', 'POST'])
 def student_sign_in():
-    import pdb; pdb.set_trace()
     connection = httplib.HTTPSConnection('api.parse.com', 443)
     connection.connect()
     jsonObj = request.json
@@ -243,7 +242,6 @@ def professor_sign_up():
 # Requires: Email, Password
 @app.route('/professor_sign_in', methods=['GET', 'POST'])
 def professor_sign_in():
-    import pdb; pdb.set_trace()
     connection = httplib.HTTPSConnection('api.parse.com', 443)
     connection.connect()
     jsonObj = request.json
