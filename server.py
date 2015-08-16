@@ -25,6 +25,23 @@ def get_all_questions():
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
+# Gets all Question objects
+@app.route('/get_all_questions_by_lecture/<lecture_id>', methods=['GET'])
+def get_all_questions(lecture_id):
+    connection = httplib.HTTPSConnection('api.parse.com', 443)
+    connection.connect()
+    params = urllib.urlencode({"where":json.dumps({
+        "Lecture_id": lecture_id,
+    })})
+    connection.request('GET', '/1/classes/Questions/?%s' % params, '', {
+           "X-Parse-Application-Id": XParseApplicationId,
+           "X-Parse-REST-API-Key": XParseRESTAPIKey,
+         })
+    result = json.loads(connection.getresponse().read())
+    resp = Response(json.dumps(result),  mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
 # Gets all Student objects
 @app.route('/get_all_students', methods=['GET'])
 def get_all_students():
