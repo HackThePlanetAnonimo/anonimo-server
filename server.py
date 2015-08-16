@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, Response, request
+from flask import Flask, Response, request
 import json, httplib, urllib
 
 app = Flask(__name__)
@@ -7,9 +7,9 @@ app = Flask(__name__)
 XParseApplicationId = "8jSxdsd0pT9odu9duHaoRMouaC46SGZlglP67J4p"
 XParseRESTAPIKey = "EBw6tp2t71e7MVbqWr2NpupphfQmyuh45CWy79DK"
 
-@app.route('/')
-def hello():
-    return render_template('index.html')
+# @app.route('/')
+# def hello():
+#     return render_template('index.html')
 
 # Gets all Question objects
 @app.route('/get_all_questions', methods=['GET'])
@@ -27,7 +27,7 @@ def get_all_questions():
 
 # Gets all Question objects
 @app.route('/get_all_questions_by_lecture/<lecture_id>', methods=['GET'])
-def get_all_questions(lecture_id):
+def get_all_questions_by_lecture(lecture_id):
     connection = httplib.HTTPSConnection('api.parse.com', 443)
     connection.connect()
     params = urllib.urlencode({"where":json.dumps({
