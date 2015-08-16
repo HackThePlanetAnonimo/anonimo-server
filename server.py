@@ -28,12 +28,13 @@ def get_all_questions():
 # Gets all Question objects
 @app.route('/get_all_questions_by_lecture/<lecture_id>', methods=['GET'])
 def get_all_questions_by_lecture(lecture_id):
+    import pdb; pdb.set_trace()
     connection = httplib.HTTPSConnection('api.parse.com', 443)
     connection.connect()
     params = urllib.urlencode({"where":json.dumps({
-        "Lecture_id": lecture_id,
+        "Lecture_id": str(lecture_id),
     })})
-    connection.request('GET', '/1/classes/Questions/?%s' % params, '', {
+    connection.request('GET', '/1/classes/Lectures/?%s' % params, '', {
            "X-Parse-Application-Id": XParseApplicationId,
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
          })
@@ -391,9 +392,6 @@ def get_all_lectures(professor_id):
 def get_lecture_by_id(lecture_id):
     connection = httplib.HTTPSConnection('api.parse.com', 443)
     connection.connect()
-    params = urllib.urlencode({"where":json.dumps({
-        "Lecture_Id": lecture_id,
-    })})
     connection.request('GET', '/1/classes/Lectures/'+lecture_id, '', {
         "X-Parse-Application-Id": XParseApplicationId,
         "X-Parse-REST-API-Key": XParseRESTAPIKey,
