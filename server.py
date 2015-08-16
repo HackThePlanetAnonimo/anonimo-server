@@ -21,7 +21,9 @@ def get_all_questions():
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
          })
     result = json.loads(connection.getresponse().read())
-    return Response(json.dumps(result),  mimetype='application/json')
+    resp = Response(json.dumps(result),  mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 # Gets all Student objects
 @app.route('/get_all_students', methods=['GET'])
@@ -50,7 +52,9 @@ def get_all_questions_by_student_id(student_id):
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
          })
     result = json.loads(connection.getresponse().read())
-    return Response(json.dumps(result),  mimetype='application/json')
+    resp = Response(json.dumps(result),  mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 # Ability to ask a question
 
@@ -73,7 +77,9 @@ def ask_a_question():
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
     })
     result = json.loads(connection.getresponse().read())
-    return Response(json.dumps({'Question_id': result['objectId']}),  mimetype='application/json')
+    resp = Response(json.dumps({'Question_id': result['objectId']}),  mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 # Ability to add a student
@@ -98,7 +104,9 @@ def student_sign_up():
     result = json.loads(connection.getresponse().read())
     # userid already exists. Signup fails
     if len(result['results']) > 0:
-        return Response(json.dumps({'success': False}),  mimetype='application/json')
+        resp = Response(json.dumps({'success': False}),  mimetype='application/json')
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
 
     connection.request('POST', '/1/classes/Students/', json.dumps({
         "Name": str(jsonObj['Name']),
@@ -110,7 +118,9 @@ def student_sign_up():
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
     })
     result = json.loads(connection.getresponse().read())
-    return Response(json.dumps({'success': True, 'Student_id': result['objectId']}),  mimetype='application/json')
+    resp = Response(json.dumps({'success': True, 'Student_id': result['objectId']}),  mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 # Ability to sign in
 # Requires: Email, Password
@@ -133,7 +143,9 @@ def student_sign_in():
 
     # Invalid credentials
     if len(results) == 0:
-        return Response(json.dumps({'success': False}),  mimetype='application/json')
+        resp = Response(json.dumps({'success': False}),  mimetype='application/json')
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
 
     studentId = results[0]['objectId']
     connection.request('PUT', '/1/classes/Students/'+studentId, json.dumps({
@@ -143,7 +155,9 @@ def student_sign_in():
        "X-Parse-REST-API-Key": XParseRESTAPIKey,
        "Content-Type": "application/json"
     })
-    return Response(json.dumps({'success': True}),  mimetype='application/json')
+    resp = Response(json.dumps({'success': True}),  mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
     # Given User_id and Password, fetch a student. If you cant, invalid credentials.
     # Else, using the ObjectId, PUT to update isLoggedIn
 
@@ -162,7 +176,9 @@ def student_sign_out():
        "X-Parse-REST-API-Key": XParseRESTAPIKey,
        "Content-Type": "application/json"
     })
-    return Response(json.dumps({'success': True}),  mimetype='application/json')  
+    resp = Response(json.dumps({'success': True}),  mimetype='application/json') 
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 # ------------- Professors -------------------------------------------
 
@@ -224,7 +240,9 @@ def professor_sign_in():
 
     # Invalid credentials
     if len(results) == 0:
-        return Response(json.dumps({'success': False}),  mimetype='application/json')
+        resp = Response(json.dumps({'success': False}),  mimetype='application/json')
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
 
     professorId = results[0]['objectId']
     connection.request('PUT', '/1/classes/Professors/'+professorId, json.dumps({
@@ -234,7 +252,9 @@ def professor_sign_in():
        "X-Parse-REST-API-Key": XParseRESTAPIKey,
        "Content-Type": "application/json"
     })
-    return Response(json.dumps({'success': True}),  mimetype='application/json')  
+    resp = Response(json.dumps({'success': True}),  mimetype='application/json')  
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 # Expects: Professor_id (Professor's objectId)
 @app.route('/professor_sign_out', methods=['POST'])
@@ -250,7 +270,9 @@ def professor_sign_out():
        "X-Parse-REST-API-Key": XParseRESTAPIKey,
        "Content-Type": "application/json"
     })
-    return Response(json.dumps({'success': True}),  mimetype='application/json') 
+    resp = Response(json.dumps({'success': True}),  mimetype='application/json') 
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 # Create a model for professor: Name, email, Password, isLoggedIn
 @app.route('/get_all_professors', methods=['GET'])
@@ -262,7 +284,9 @@ def get_all_professors():
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
          })
     result = json.loads(connection.getresponse().read())
-    return Response(json.dumps(result),  mimetype='application/json')
+    resp = Response(json.dumps(result),  mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 # expects: Question_id
 # modifies: Status field of Question model
@@ -280,7 +304,9 @@ def answer_a_question():
        "X-Parse-REST-API-Key": XParseRESTAPIKey,
        "Content-Type": "application/json"
     })
-    return Response(json.dumps({'success': True}),  mimetype='application/json')  
+    resp = Response(json.dumps({'success': True}),  mimetype='application/json')  
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 # expects: Question_id
 # modifies: Votes field of Question model
@@ -301,7 +327,9 @@ def vote_a_question():
        "X-Parse-REST-API-Key": XParseRESTAPIKey,
        "Content-Type": "application/json"
     })
-    return Response(json.dumps({'success': True}),  mimetype='application/json') 
+    resp = Response(json.dumps({'success': True}),  mimetype='application/json') 
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 # {"Professor_id": "ebS7BImXgB", "Student_ids": "kV2kIEKENH,L5cfAtIG6y"}
 # bunch of student ids separated by comma
@@ -320,8 +348,9 @@ def setup_a_lecture():
            "X-Parse-REST-API-Key": XParseRESTAPIKey,
     })
     result = json.loads(connection.getresponse().read())
-    return Response(json.dumps({'success': True, 'Lecture_id': result['objectId']}),  mimetype='application/json')
-
+    resp = Response(json.dumps({'success': True, 'Lecture_id': result['objectId']}),  mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 if __name__ == "__main__":
     app.run()
